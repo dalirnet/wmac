@@ -15,6 +15,7 @@ mkdir -p build/WMac.app/Contents/Resources
 
 swiftc -o build/WMac.app/Contents/MacOS/WMac \
     Sources/WMacApp.swift \
+    Sources/Models/*.swift \
     Sources/Utils/*.swift \
     Sources/Views/*.swift \
     -framework SwiftUI \
