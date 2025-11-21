@@ -2,22 +2,12 @@
 
 > WiFi MAC Address Controller for Huawei EchoLife GPON Terminal
 
-A native macOS application built with SwiftUI that provides an intuitive interface to manage WiFi access control through MAC address filtering on Huawei EchoLife GPON Terminal routers.
-
----
+A native macOS application built with SwiftUI that provides an intuitive interface to manage WiFi access control through MAC address filtering on Huawei EchoLife GPON Terminal routers. This app uses SSH to communicate with your router and requires macOS 13.0 or later.
 
 ## Features
 
-- 📱 Native macOS app with SwiftUI
-- 🔐 MAC address filtering management
-- 🔧 Direct configuration of GPON Terminal
+- 📱 Native SwiftUI interface
 - ⚡ Lightweight and fast
-- ✨ Clean, modern interface
-
-## Requirements
-
-- macOS 13.0 (Ventura) or later
-- Huawei EchoLife GPON Terminal with SSH access
 
 ---
 
@@ -64,7 +54,7 @@ Find `SSHLanEnable` and change from `"0"` to `"1"`:
 - Upload the modified configuration file
 - Device will reboot automatically
 
-**5. Connect via SSH**
+**5. Test SSH Connectivity**
 
 ```bash
 ssh -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa root@192.168.1.1
