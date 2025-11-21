@@ -14,8 +14,6 @@ A native macOS application built with SwiftUI that provides an intuitive interfa
 - ⚡ Lightweight and fast
 - ✨ Clean, modern interface
 
----
-
 ## Requirements
 
 - macOS 13.0 (Ventura) or later
@@ -42,7 +40,7 @@ Navigate to: `Advanced → Maintenance Diagnostic → Configuration File Managem
 
 Download the current configuration file.
 
-> ⚠️ Keep a backup before making changes.  
+> ⚠️ Keep a backup before making changes.
 > 💡 If encrypted, decrypt first before editing (not required for all devices).
 
 **3. Configure SSH**
@@ -72,7 +70,7 @@ Find `SSHLanEnable` and change from `"0"` to `"1"`:
 ssh -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa root@192.168.1.1
 ```
 
-> 💡 Options required for older `ssh-rsa` algorithm.  
+> 💡 Options required for older `ssh-rsa` algorithm.
 > 🔑 Only `root` user can connect (password on device back). `telecomadmin` is web-only.
 
 ---
