@@ -1,0 +1,45 @@
+#!/usr/bin/expect -f
+set timeout 30
+log_user 1
+
+set host [lindex $argv 0]
+set user [lindex $argv 1]
+set password [lindex $argv 2]
+set command [lindex $argv 3]
+
+spawn ssh -o StrictHostKeyChecking=no -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa -p 22 $user@$host
+
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    -re "(WAP>|#|>|\\$)" {
+        sleep 0.5
+        send "$command"
+        sleep 0.2
+        send "\r"
+        expect {
+            -re "(WAP>|#|>|\\$)" {
+                send "exit\r"
+                exit 0
+            }
+            timeout {
+                puts "\nERROR: Command timeout"
+                exit 3
+            }
+        }
+    }
+    "Permission denied" {
+        puts "ERROR: Authentication failed"
+        exit 2
+    }
+    "Connection refused" {
+        puts "ERROR: Connection refused"
+        exit 4
+    }
+    timeout {
+        puts "ERROR: Connection timeout"
+        exit 6
+    }
+}
