@@ -15,7 +15,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "WMac",
-            path: "Sources"
+            path: "Sources",
+            resources: [
+                .process("../Assets.xcassets")
+            ]
         )
     ]
 )

@@ -2,6 +2,10 @@
 build:
 	sh build.sh
 
+.PHONY: release
+release:
+	sh build.sh release
+
 .PHONY: run
 run: build
 	killall WMac 2>/dev/null || true
@@ -10,4 +14,4 @@ run: build
 
 .PHONY: clean
 clean:
-	rm -rf build
+	rm -rf build .build
