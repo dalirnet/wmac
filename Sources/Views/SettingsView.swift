@@ -1,16 +1,17 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject var settings: TerminalSettings
+    @ObservedObject var settings: Settings
     @Binding var isPresented: Bool
-    @StateObject private var sshHelper = SSHHelper()
+    @StateObject private var ssh = SSH()
     @State private var showPassword = false
+    @State private var showTestResult = false
 
     var body: some View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Terminal Settings")
+                Text("Settings")
                     .font(.title2)
                     .fontWeight(.semibold)
 
@@ -38,6 +39,10 @@ struct SettingsView: View {
                         TextField("192.168.1.1", text: $settings.ipAddress)
                             .textFieldStyle(.roundedBorder)
                             .font(.body)
+
+                        Text("Terminal network address")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
 
                     // SSH User
@@ -49,7 +54,7 @@ struct SettingsView: View {
                             .textFieldStyle(.roundedBorder)
                             .font(.body)
 
-                        Text("Only 'root' user has SSH access")
+                        Text("Default is 'root'")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -77,48 +82,23 @@ struct SettingsView: View {
                             .buttonStyle(.plain)
                         }
 
-                        Text("Find password on device back label")
+                        Text("Check device label")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
 
-                    // Test Result
-                    if let result = sshHelper.testResult {
-                        HStack(alignment: .top, spacing: 12) {
-                            switch result {
-                            case .success:
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.title3)
-                                    .foregroundColor(.green)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Connection Successful")
-                                        .font(.headline)
-                                        .foregroundColor(.green)
-                                    Text("Terminal is ready to use")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                            case .failure(let message):
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.title3)
-                                    .foregroundColor(.red)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Connection Failed")
-                                        .font(.headline)
-                                        .foregroundColor(.red)
-                                    Text(message)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                            }
-                        }
-                        .padding(16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(NSColor.controlBackgroundColor))
-                        )
+                    // SSID Index
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("SSID Index", systemImage: "wifi")
+                            .font(.headline)
+
+                        TextField("SSID-1", text: $settings.ssidIndex)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.body)
+
+                        Text("Format: SSID-1 to SSID-8")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
                 .padding(24)
@@ -130,27 +110,28 @@ struct SettingsView: View {
             HStack(spacing: 12) {
                 Button(action: {
                     Task {
-                        await sshHelper.testConnection(
+                        await ssh.testConnection(
                             host: settings.ipAddress,
                             user: settings.sshUser,
                             password: settings.sshPassword
                         )
+                        showTestResult = true
                     }
                 }) {
                     HStack(spacing: 6) {
-                        if sshHelper.isTesting {
+                        if ssh.isTesting {
                             ProgressView()
                                 .scaleEffect(0.5)
                                 .frame(width: 10, height: 10)
                         }
-                        Text(sshHelper.isTesting ? "Testing..." : "Test Connection")
+                        Text(ssh.isTesting ? "Testing" : "Test Connection")
                     }
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
                 .disabled(
                     settings.ipAddress.isEmpty || settings.sshUser.isEmpty
-                        || settings.sshPassword.isEmpty || sshHelper.isTesting)
+                        || settings.sshPassword.isEmpty || ssh.isTesting)
 
                 Spacer()
 
@@ -163,5 +144,24 @@ struct SettingsView: View {
             .padding(24)
         }
         .frame(width: 480, height: 600)
+        .alert(isPresented: $showTestResult) {
+            if let result = ssh.testResult {
+                switch result {
+                case .success:
+                    return Alert(
+                        title: Text("Connection Successful"),
+                        message: Text("Terminal is ready to use"),
+                        dismissButton: .default(Text("OK"))
+                    )
+                case .failure(let message):
+                    return Alert(
+                        title: Text("Connection Failed"),
+                        message: Text(message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+            }
+            return Alert(title: Text("Test Result"))
+        }
     }
 }
