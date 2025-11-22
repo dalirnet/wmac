@@ -1,6 +1,11 @@
 import Foundation
+import SystemConfiguration
 
-class NetworkHelper {
+// MARK: - Network
+/// Utility class for network-related operations including gateway detection
+class Network {
+    /// Get the default gateway IP address from network routing table
+    /// - Returns: Gateway IP address string, or nil if unavailable
     static func getDefaultGateway() -> String? {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/sbin/netstat")
@@ -43,6 +48,9 @@ class NetworkHelper {
         return nil
     }
 
+    /// Validate if a string is a valid IPv4 address
+    /// - Parameter string: The string to validate
+    /// - Returns: True if the string matches IPv4 format, false otherwise
     private static func isValidIPAddress(_ string: String) -> Bool {
         let ipPattern =
             "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
