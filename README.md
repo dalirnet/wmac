@@ -6,6 +6,8 @@ Just a weekend hack for personal use and learning.
 
 A native macOS application built with SwiftUI that provides an intuitive interface to manage WiFi access control through MAC address filtering on Huawei EchoLife GPON Terminal routers.
 
+![WMac Screenshot](wmac.png)
+
 ## Requirements
 
 - macOS 13.0 or later
